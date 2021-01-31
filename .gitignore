@@ -13,3 +13,4 @@ test_output/*
 *.pdf
 *.gif
 testing/*
+rnn/points_path/*
