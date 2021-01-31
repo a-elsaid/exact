@@ -1,1 +1,5 @@
+#add_library(exalt_strategy generate_nn exalt rnn_genome rnn lstm_node ugrnn_node delta_node gru_node mgu_node mse rnn_node rnn_edge rnn_recurrent_edge rnn_node_interface node_pheromone edge_pheromone)
+
 add_library(examm_strategy generate_nn examm rnn_genome rnn lstm_node ugrnn_node delta_node gru_node mgu_node mse rnn_node rnn_edge rnn_recurrent_edge rnn_node_interface island island_speciation_strategy species neat_speciation_strategy)
+
+add_library(colony_strategy generate_nn rnn_genome rnn lstm_node ugrnn_node delta_node gru_node mgu_node mse rnn_node rnn_edge rnn_recurrent_edge rnn_node_interface point ant cants_dbscan)

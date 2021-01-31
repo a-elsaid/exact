@@ -17,9 +17,9 @@ SET (PLATFORM 64)
 #SET (CMAKE_CXX_FLAGS                "-std=c++11 -Wall -O3 -funroll-loops -msse3 -DNAN_CHECKS")
 
 # 1 This line for local
-#SET (CMAKE_CXX_FLAGS                "-std=c++17 -Wall -O3 -funroll-loops  -msse3 -fsanitize=address -fno-omit-frame-pointer -D_GLIBCXX_DEBUG")
+SET (CMAKE_CXX_FLAGS                "-std=c++17 -Wall -O3 -funroll-loops  -msse3 -fsanitize=address -fno-omit-frame-pointer -D_GLIBCXX_DEBUG")
 # 2 This line for cluster
-SET (CMAKE_CXX_FLAGS                "-std=c++17 -Wall -O3 -funroll-loops  -msse3 -fno-omit-frame-pointer -D_GLIBCXX_DEBUG")
+#SET (CMAKE_CXX_FLAGS                "-std=c++17 -Wall -O3 -funroll-loops  -msse3 -fno-omit-frame-pointer -D_GLIBCXX_DEBUG")
 
 #SET (CMAKE_CXX_FLAGS                "-std=c++17 -Wall -O3 -funroll-loops -msse3")
 SET (CMAKE_CXX_FLAGS_DEBUG          "-g")
@@ -78,32 +78,32 @@ ELSE (COMPILE_CLIENT STREQUAL "YES")
     #set(TIFF_LIBRARIES /usr/lib64/libtiffxx.so /usr/lib64/libtiff.so)
     #set(TIFF_FOUND true)
 
-    find_package(TIFF)
+#    find_package(TIFF)
 
-    message(STATUS "TIFF found? ${TIFF_FOUND}")
-    message(STATUS "TIFF libraries: ${TIFF_LIBRARIES}")
-    message(STATUS "TIFF include dir: ${TIFF_INCLUDE_DIR}")
-    IF (TIFF_FOUND)
-        add_definitions( -D_HAS_TIFF_ )
-        include_directories(${TIFF_INCLUDE_DIR})
-    ENDIF (TIFF_FOUND)
+#    message(STATUS "TIFF found? ${TIFF_FOUND}")
+#    message(STATUS "TIFF libraries: ${TIFF_LIBRARIES}")
+#    message(STATUS "TIFF include dir: ${TIFF_INCLUDE_DIR}")
+#    IF (TIFF_FOUND)
+#        add_definitions( -D_HAS_TIFF_ )
+#        include_directories(${TIFF_INCLUDE_DIR})
+#    ENDIF (TIFF_FOUND)
 ENDIF (COMPILE_CLIENT STREQUAL "YES")
 
 
 add_subdirectory(common)
-add_subdirectory(image_tools)
+#add_subdirectory(image_tools)
 add_subdirectory(time_series)
-add_subdirectory(cnn)
+#add_subdirectory(cnn)
 
 add_subdirectory(rnn)
-add_subdirectory(rnn_tests)
-add_subdirectory(rnn_examples)
+#add_subdirectory(rnn_tests)
+#add_subdirectory(rnn_examples)
 
 #add_subdirectory(opencl)
 
-add_subdirectory(cnn_tests)
-add_subdirectory(cnn_examples)
-add_subdirectory(multithreaded)
+#add_subdirectory(cnn_tests)
+#add_subdirectory(cnn_examples)
+#add_subdirectory(multithreaded)
 add_subdirectory(mpi)
 
 

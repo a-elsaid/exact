@@ -20,6 +20,7 @@ using std::ios;
 
 #include <iostream>
 using std::endl;
+using std::cout;
 
 #include <random>
 using std::minstd_rand0;
@@ -359,7 +360,7 @@ string RNN_Genome::generated_by_string() {
         first = false;
     }
     oss << "]";
-    
+
     return oss.str();
 }
 
@@ -616,7 +617,7 @@ void RNN_Genome::initialize_randomly() {
         initial_parameters[i] = rng(generator);
     }
     this->set_weights(initial_parameters);
-    this->set_best_parameters(initial_parameters); 
+    this->set_best_parameters(initial_parameters);
     this->set_weights(initial_parameters);
 }
 
@@ -1590,7 +1591,7 @@ void RNN_Genome::get_mu_sigma(const vector<double> &p, double &mu, double &sigma
         }
         */
 
-        if (p[i] < -10) mu += -10.0; 
+        if (p[i] < -10) mu += -10.0;
         else if (p[i] > 10)  mu += 10.0;
         else mu += p[i];
     }
@@ -1759,7 +1760,7 @@ bool RNN_Genome::add_edge(double mu, double sigma, int32_t &edge_innovation_coun
     for (int i = 0; i < reachable_nodes.size();) {
         auto it = reachable_nodes[i];
         if (it->depth == n1->depth) {
-            reachable_nodes.erase(reachable_nodes.begin() + i);        
+            reachable_nodes.erase(reachable_nodes.begin() + i);
         } else {
             i++;
         }
@@ -1968,7 +1969,7 @@ bool RNN_Genome::connect_new_input_node(double mu, double sigma, RNN_Node_Interf
     output_sigma /= (enabled_count - 1);
     output_sigma = sqrt(output_sigma);
 
- 
+
     int32_t max_outputs = fmax(1, 2.0 + normal_distribution.random(generator, avg_outputs, output_sigma));
     Log::info("\tadd new input node, max_outputs: %d\n", max_outputs);
 
@@ -2933,7 +2934,7 @@ void RNN_Genome::read_from_stream(istream &bin_istream) {
     // Formerly:
     // istringstream rng_0_1_iss(rng_0_1_str);
     //rng_0_1_iss >> rng_0_1;
-     
+
 
     string generated_by_map_str;
     read_binary_string(bin_istream, generated_by_map_str, "generated_by_map");
@@ -3208,7 +3209,7 @@ void RNN_Genome::write_to_stream(ostream &bin_ostream) {
     Log::debug("writing %d nodes.\n", n_nodes);
 
     for (uint32_t i = 0; i < nodes.size(); i++) {
-        Log::debug("NODE: %d %d %d %d '%s'\n", nodes[i]->innovation_number, nodes[i]->layer_type, nodes[i]->node_type, nodes[i]->depth, nodes[i]->parameter_name.c_str());
+        Log::debug("NODE: %d %d %d %lf '%s'\n", nodes[i]->innovation_number, nodes[i]->layer_type, nodes[i]->node_type, nodes[i]->depth, nodes[i]->parameter_name.c_str());
         nodes[i]->write_to_stream(bin_ostream);
     }
 
@@ -3292,7 +3293,7 @@ vector<int32_t> RNN_Genome::get_innovation_list() {
     vector<int32_t> innovations;
     for (int32_t i = 0; i < edges.size(); i++){
         int32_t innovation = edges[i]->get_innovation_number();
-        auto it = std::upper_bound(innovations.begin(), innovations.end(), innovation); 
+        auto it = std::upper_bound(innovations.begin(), innovations.end(), innovation);
         innovations.insert(it, innovation);
     }
     return innovations;
@@ -3542,7 +3543,7 @@ void RNN_Genome::transfer_to(const vector<string> &new_input_parameter_names, co
 
     Log::info("starting transfer learning versions\n");
 
-    if (transfer_learning_version.compare("v1") != 0 && 
+    if (transfer_learning_version.compare("v1") != 0 &&
             transfer_learning_version.compare("v2") != 0 &&
             transfer_learning_version.compare("v1+v2") != 0) {
         Log::fatal("ERROR: unknown transfer learning version specified, '%s', options are:\n", transfer_learning_version.c_str());
@@ -3660,7 +3661,3 @@ void RNN_Genome::transfer_to(const vector<string> &new_input_parameter_names, co
 
     Log::info("FINISHING PREPARING INITIAL GENOME\n");
 }
-
-
-
-

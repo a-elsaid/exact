@@ -64,7 +64,7 @@ class RNN_Genome {
         vector<double> best_parameters;
 
         minstd_rand0 generator;
-        
+
         uniform_real_distribution<double> rng_0_1;
         NormalDistribution normal_distribution;
 
@@ -249,7 +249,7 @@ class RNN_Genome {
         bool connect_new_input_node( double mu, double sig, RNN_Node_Interface *new_node, uniform_int_distribution<int32_t> dist, int32_t &edge_innovation_count );
         bool connect_new_output_node( double mu, double sig, RNN_Node_Interface *new_node, uniform_int_distribution<int32_t> dist, int32_t &edge_innovation_count );
         bool connect_node_to_hid_nodes( double mu, double sig, RNN_Node_Interface *new_node, uniform_int_distribution<int32_t> dist, int32_t &edge_innovation_count, bool from_input );
-        
+
         void update_innovation_counts(int32_t &node_innovation_count, int32_t &edge_innovation_count);
 
         vector<int32_t> get_innovation_list();
@@ -271,6 +271,7 @@ class RNN_Genome {
         void transfer_to(const vector<string> &new_input_parameter_names, const vector<string> &new_output_parameter_names, string transfer_learning_version, bool epigenetic_weights, int32_t min_recurrent_depth, int32_t max_recurrent_depth);
 
         friend class EXAMM;
+        friend class COLONY;
         friend class IslandSpeciationStrategy;
         friend class NeatSpeciationStrategy;
         friend class RecDepthFrequencyTable;

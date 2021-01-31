@@ -78,6 +78,8 @@ RNN_Edge* RNN_Edge::copy(const vector<RNN_Node_Interface*> new_nodes) {
 
 
 void RNN_Edge::propagate_forward(int time) {
+    // std::cout << "Nodes ID:: " << input_node->innovation_number << "   " << output_node->innovation_number << std::endl;
+    // std::cout << "Nodes Type:: " << input_node->layer_type << "   " << output_node->layer_type << std::endl;
     if (input_node->inputs_fired[time] != input_node->total_inputs) {
         Log::fatal("ERROR! propagate forward called on edge %d where input_node->inputs_fired[%d] (%d) != total_inputs (%d)\n", innovation_number, time, input_node->inputs_fired[time], input_node->total_inputs);
         Log::fatal("input innovation number: %d, output innovation number: %d\n", input_node->innovation_number, output_node->innovation_number);

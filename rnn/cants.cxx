@@ -22,93 +22,18 @@ using std::vector;
 #include "common/arguments.hxx"
 #include "common/log.hxx"
 
-#include "rnn/examm.hxx"
+#include "colony.hxx"
 
 #include "time_series/time_series.hxx"
 
-#define WORK_REQUEST_TAG 1
-#define GENOME_LENGTH_TAG 2
-#define GENOME_TAG 3
-#define TERMINATE_TAG 4
-
-mutex examm_mutex;
 
 vector<string> arguments;
-
-EXAMM *examm;
-
-bool finished = false;
 
 vector< vector< vector<double> > > training_inputs;
 vector< vector< vector<double> > > training_outputs;
 vector< vector< vector<double> > > validation_inputs;
 vector< vector< vector<double> > > validation_outputs;
 
-void send_work_request(int target) {
-    int work_request_message[1];
-    work_request_message[0] = 0;
-    MPI_Send(work_request_message, 1, MPI_INT, target, WORK_REQUEST_TAG, MPI_COMM_WORLD);
-}
-
-void receive_work_request(int source) {
-    MPI_Status status;
-    int work_request_message[1];
-    MPI_Recv(work_request_message, 1, MPI_INT, source, WORK_REQUEST_TAG, MPI_COMM_WORLD, &status);
-}
-
-RNN_Genome* receive_genome_from(int source) {
-    MPI_Status status;
-    int length_message[1];
-    MPI_Recv(length_message, 1, MPI_INT, source, GENOME_LENGTH_TAG, MPI_COMM_WORLD, &status);
-
-    int length = length_message[0];
-
-    Log::debug("receiving genome of length: %d from: %d\n", length, source);
-
-    char* genome_str = new char[length + 1];
-
-    Log::debug("receiving genome from: %d\n", source);
-    MPI_Recv(genome_str, length, MPI_CHAR, source, GENOME_TAG, MPI_COMM_WORLD, &status);
-
-    genome_str[length] = '\0';
-
-    Log::trace("genome_str:\n%s\n", genome_str);
-
-    RNN_Genome* genome = new RNN_Genome(genome_str, length);
-
-    delete [] genome_str;
-    return genome;
-}
-
-void send_genome_to(int target, RNN_Genome* genome) {
-    char *byte_array;
-    int32_t length;
-
-    genome->write_to_array(&byte_array, length);
-
-    Log::debug("sending genome of length: %d to: %d\n", length, target);
-
-    int length_message[1];
-    length_message[0] = length;
-    MPI_Send(length_message, 1, MPI_INT, target, GENOME_LENGTH_TAG, MPI_COMM_WORLD);
-
-    Log::debug("sending genome to: %d\n", target);
-    MPI_Send(byte_array, length, MPI_CHAR, target, GENOME_TAG, MPI_COMM_WORLD);
-
-    free(byte_array);
-}
-
-void send_terminate_message(int target) {
-    int terminate_message[1];
-    terminate_message[0] = 0;
-    MPI_Send(terminate_message, 1, MPI_INT, target, TERMINATE_TAG, MPI_COMM_WORLD);
-}
-
-void receive_terminate_message(int source) {
-    MPI_Status status;
-    int terminate_message[1];
-    MPI_Recv(terminate_message, 1, MPI_INT, source, TERMINATE_TAG, MPI_COMM_WORLD, &status);
-}
 
 void master(int max_rank) {
     //the "main" id will have already been set by the main function so we do not need to re-set it here
@@ -173,55 +98,9 @@ void master(int max_rank) {
 }
 
 void worker(int rank) {
-    Log::set_id("worker_" + to_string(rank));
-
-    while (true) {
-        Log::debug("sending work request!\n");
-        send_work_request(0);
-        Log::debug("sent work request!\n");
-
-        MPI_Status status;
-        MPI_Probe(0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-        int tag = status.MPI_TAG;
-
-        Log::debug("probe received message with tag: %d\n", tag);
-
-        if (tag == TERMINATE_TAG) {
-            Log::debug("received terminate tag!\n");
-            receive_terminate_message(0);
-            break;
-
-        } else if (tag == GENOME_LENGTH_TAG) {
-            Log::debug("received genome!\n");
-            RNN_Genome* genome = receive_genome_from(0);
-
-            //have each worker write the backproagation to a separate log file
-            string log_id = "genome_" + to_string(genome->get_generation_id()) + "_worker_" + to_string(rank);
-            Log::set_id(log_id);
-            genome->backpropagate_stochastic(training_inputs, training_outputs, validation_inputs, validation_outputs);
-            Log::release_id(log_id);
-
-            //go back to the worker's log for MPI communication
-            Log::set_id("worker_" + to_string(rank));
-
-            send_genome_to(0, genome);
-
-            delete genome;
-        } else {
-            Log::fatal("ERROR: received message with unknown tag: %d\n", tag);
-            MPI_Abort(MPI_COMM_WORLD, 1);
-        }
-    }
-
-    //release the log file for the worker communication
-    Log::release_id("worker_" + to_string(rank));
+    
 }
 
-// void stop(int rank) {
-//     std::cout<<"RANK: " << rank <<" -- AAAA:: XXXXXXXXXXXXXXXXXXXX\n";
-//     MPI_Barrier(MPI_COMM_WORLD);
-//     getchar();
-// }
 
 int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
