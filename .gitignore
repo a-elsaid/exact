@@ -12,4 +12,4 @@ visualization/plots/*
 test_output/*
 *.pdf
 *.gif
-./testing
+testing/*
